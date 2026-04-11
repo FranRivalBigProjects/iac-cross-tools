@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let t=+tf.value,a=+ansible.value;if(!t||!a){res.innerText='Enter values';return;}res.innerText=t>a?'Terraform infra focus':'Ansible config focus';}

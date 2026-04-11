@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let c=+chef.value,p=+puppet.value;if(!c||!p){res.innerText='Enter values';return;}res.innerText=c<p?'Chef simpler':'Puppet simpler';}

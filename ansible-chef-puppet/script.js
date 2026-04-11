@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let a=+a.value,c=+c.value,pv=+p.value;if(!a||!c||!pv){res.innerText='Enter values';return;}res.innerText=Math.min(a,c,pv)==a?'Ansible best':Math.min(a,c,pv)==c?'Chef best':'Puppet best';}

@@ -1,0 +1,1 @@
+const res=document.getElementById('res');function run(){let t=+tf.value,p=+pulumi.value;if(!t||!p){res.innerText='Enter values';return;}res.innerText=t<p?'Terraform faster':'Pulumi faster';}
