@@ -1,112 +1,1019 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>IaC Cross Tools – Terraform, Ansible, Pulumi Comparison & Performance</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<meta name="robots" content="index, follow">
 
-  <!-- Google verification -->
-  <meta name="google-site-verification" content="PkLa_ViOo6FAHpvh8SacceMb95o9tePRdrqLNBz9X1M" />
+<title>Ansible vs Pulumi vs Terraform Comparison – IaC Tools Guide &amp; Selector</title>
 
-  <!-- SEO -->
-  <meta name="description" content="Compare Infrastructure as Code tools like Terraform, Ansible, Pulumi, Chef, and Puppet. Analyze performance, use cases, and deployment strategies.">
-  <meta name="keywords" content="terraform vs ansible, terraform vs pulumi, ansible vs chef vs puppet, iac tools comparison, pulumi performance, infrastructure as code tools">
+<meta name="description" content="Complete comparison of Ansible vs Pulumi vs Terraform. Covers Puppet vs Terraform, Puppet vs Terraform vs Ansible, and all major IaC tools. Interactive selector to find the right tool for your use case. Free reference guide.">
 
-  <!-- AdSense -->
-  <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
+<meta name="keywords" content="ansible vs pulumi vs terraform comparison, puppet vs terraform, puppet vs terraform vs ansible, terraform vs puppet, iac tools comparison, terraform vs ansible, pulumi vs terraform, ansible vs puppet, infrastructure as code comparison">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="IaC Cross Tools – DevOps Comparison & Analysis">
-  <meta property="og:description" content="Compare Terraform, Ansible, Pulumi, Chef, and Puppet with real-world use cases and performance insights.">
-  <meta property="og:type" content="website">
+<link rel="canonical" href="https://franrivalbigprojects.github.io/iac-cross-tools/">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #020617;
-      color: #e2e8f0;
-      margin: 0;
-      padding: 40px;
-    }
-    h1 {
-      color: #60a5fa;
-    }
-    p {
-      max-width: 900px;
-      line-height: 1.6;
-    }
-    .tools {
-      margin-top: 30px;
-    }
-    .tool {
-      background: #1e293b;
-      padding: 14px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      transition: 0.2s;
-    }
-    .tool:hover {
-      background: #334155;
-    }
-    a {
-      color: #22c55e;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta property="og:title" content="Ansible vs Pulumi vs Terraform Comparison – IaC Tools Guide">
+<meta property="og:description" content="Compare Terraform, Ansible, Pulumi, Puppet, and Chef. Interactive tool selector and detailed comparison table. Free reference.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #040810;
+  --surface: #07101a;
+  --surface2: #0c1622;
+  --border: #101e2e;
+  --border2: #162d42;
+  --tf: #7b42bc;
+  --tf-dim: rgba(123,66,188,0.12);
+  --tf-dim2: rgba(123,66,188,0.05);
+  --ansible: #e00;
+  --ansible-dim: rgba(238,0,0,0.08);
+  --pulumi: #f26e7e;
+  --pulumi-dim: rgba(242,110,126,0.1);
+  --puppet: #ffae1a;
+  --puppet-dim: rgba(255,174,26,0.1);
+  --chef: #f18b21;
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.1);
+  --green-dim2: rgba(34,197,94,0.05);
+  --blue: #38bdf8;
+  --blue-dim: rgba(56,189,248,0.08);
+  --red: #f87171;
+  --yellow: #fbbf24;
+  --text: #b8cce0;
+  --text-muted: #3a5570;
+  --text-dim: #0f1e30;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --r: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 44px 44px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(4,8,16,0.97);
+  backdrop-filter: blur(12px);
+}
+
+.header-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tf);
+  background: var(--tf-dim2);
+  border: 1px solid rgba(123,66,188,0.3);
+  border-radius: 3px;
+  padding: 3px 9px;
+}
+
+.logo-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.logo-text strong { color: var(--tf); font-weight: 500; }
+
+.wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* HERO */
+.hero {
+  padding: 50px 0 38px;
+  border-bottom: 1px solid var(--border2);
+  margin-bottom: 32px;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tf);
+  margin-bottom: 14px;
+  opacity: 0.85;
+}
+
+h1 {
+  font-size: clamp(22px, 3.2vw, 31px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: -0.022em;
+  line-height: 1.18;
+}
+
+h1 em { font-style: normal; color: var(--tf); }
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+  max-width: 620px;
+  line-height: 1.75;
+  margin-bottom: 22px;
+}
+
+.hero-sub strong { color: var(--text); }
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.pill-tf  { color: var(--tf);     background: var(--tf-dim2); border-color: rgba(123,66,188,0.3); }
+.pill-an  { color: var(--red);    background: rgba(238,0,0,0.06); border-color: rgba(238,0,0,0.25); }
+.pill-dim { color: var(--text-muted); border-color: var(--border2); }
+
+/* TOOL SELECTOR */
+.selector-shell {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.sel-topbar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sel-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sel-body {
+  padding: 20px;
+}
+
+.qs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.qs-group { display: flex; flex-direction: column; gap: 7px; }
+
+.qs-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.qs-options { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.qs-opt {
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  border-radius: 4px;
+  border: 1px solid var(--border2);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+
+.qs-opt:hover { border-color: var(--tf); color: var(--text); }
+.qs-opt.active { border-color: var(--tf); background: var(--tf-dim2); color: var(--tf); }
+
+.rec-card {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--tf);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 16px 18px;
+  display: none;
+}
+
+.rec-card.show { display: block; }
+
+.rec-tool {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.rec-why {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.rec-why strong { color: var(--text); }
+
+/* COMPARISON TABLE */
+.cmp-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.cmp-topbar {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border2);
+  background: var(--bg);
+}
+
+.filter-btn {
+  padding: 5px 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.filter-btn:hover { border-color: var(--tf); color: var(--text); }
+.filter-btn.active { border-color: var(--tf); background: var(--tf-dim2); color: var(--tf); }
+
+.cmp-table-scroll { overflow-x: auto; }
+
+.cmp-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+}
+
+.cmp-table th, .cmp-table td {
+  padding: 10px 14px;
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 11px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.cmp-table th {
+  background: var(--surface2);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.cmp-table td { color: var(--text-muted); vertical-align: top; }
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:hover td { background: rgba(123,66,188,0.02); }
+
+.td-criteria { color: var(--text); font-weight: 500; width: 160px; }
+
+.score-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.sp-strong { color: var(--green);  background: var(--green-dim2); border-color: rgba(34,197,94,0.25); }
+.sp-good   { color: var(--blue);   background: var(--blue-dim);   border-color: rgba(56,189,248,0.25); }
+.sp-medium { color: var(--yellow); background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.25); }
+.sp-weak   { color: var(--red);    background: rgba(248,113,113,0.08); border-color: rgba(248,113,113,0.2); }
+.sp-na     { color: var(--text-muted); border-color: var(--border2); }
+
+.hidden-row { display: none; }
+
+/* SECTION */
+hr.divider { border: none; border-top: 1px solid var(--border2); margin: 52px 0; }
+
+.content-section { margin-bottom: 52px; }
+
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sec-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--tf);
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+.sec-rule { flex: 1; height: 1px; background: var(--border2); }
+
+p { font-size: 14px; color: var(--text-muted); line-height: 1.8; margin-bottom: 10px; }
+p strong { color: var(--text); }
+
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--surface2);
+  color: var(--tf);
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+}
+
+/* TOOL CARDS */
+.tool-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  transition: border-color 0.15s;
+}
+
+.tool-card:hover { border-color: rgba(123,66,188,0.3); }
+
+.tc-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tc-badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.tcb-tf     { color: var(--tf);     background: var(--tf-dim2);     border-color: rgba(123,66,188,0.3); }
+.tcb-an     { color: var(--red);    background: rgba(238,0,0,0.06);  border-color: rgba(238,0,0,0.25); }
+.tcb-pu     { color: var(--pulumi); background: rgba(242,110,126,0.06); border-color: rgba(242,110,126,0.25); }
+.tcb-pp     { color: var(--puppet); background: rgba(255,174,26,0.06); border-color: rgba(255,174,26,0.25); }
+.tcb-ch     { color: var(--chef);   background: rgba(241,139,33,0.06); border-color: rgba(241,139,33,0.25); }
+
+.tc-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.tc-type {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.tc-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+.tc-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tc-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  color: var(--text-dim);
+}
+
+/* VERSUS SECTIONS */
+.versus-block {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 22px;
+  margin-bottom: 14px;
+}
+
+.vs-head {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tf);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.vs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.vs-col-head {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.vs-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.vs-verdict {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--green);
+  border-radius: 0 4px 4px 0;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.vs-verdict strong { color: var(--green); }
+
+/* FAQ */
+.faq-list {
+  margin-top: 14px;
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.faq-item { border-bottom: 1px solid var(--border2); }
+.faq-item:last-child { border-bottom: none; }
+
+.faq-q {
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: none;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  font-family: var(--sans);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.15s;
+}
+
+.faq-q:hover { background: var(--tf-dim2); }
+.faq-arrow { font-family: var(--mono); font-size: 11px; color: var(--text-dim); transition: transform 0.2s; flex-shrink: 0; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+
+.faq-a {
+  display: none;
+  padding: 0 18px 13px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  border-top: 1px solid var(--border2);
+  background: var(--bg);
+}
+
+.faq-item.open .faq-a { display: block; }
+.faq-a code { color: var(--tf); background: var(--tf-dim2); }
+
+.other-tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.otl {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s;
+}
+
+.otl:hover { border-color: rgba(123,66,188,0.3); }
+.otl-eye  { font-family: var(--mono); font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.otl-name { font-family: var(--mono); font-size: 12px; color: var(--tf); font-weight: 500; }
+
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 52px; }
+
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 4px 12px;
+  cursor: default;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tag:hover { color: var(--tf); border-color: rgba(123,66,188,0.3); }
+
+footer { border-top: 1px solid var(--border2); padding: 20px 0; position: relative; z-index: 1; }
+
+.footer-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+footer p { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin: 0; }
+
+@media (max-width: 680px) {
+  .qs-grid  { grid-template-columns: 1fr; }
+  .vs-row   { grid-template-columns: 1fr; }
+  .tool-cards { grid-template-columns: 1fr; }
+}
+</style>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Ansible vs Pulumi vs Terraform Comparison","description":"Complete comparison of Ansible vs Pulumi vs Terraform vs Puppet vs Chef. Covers provisioning vs configuration management, state management, learning curve, language, and use cases. Includes interactive IaC tool selector.","keywords":"ansible vs pulumi vs terraform comparison, puppet vs terraform, puppet vs terraform vs ansible, terraform vs puppet, iac tools comparison"}
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between Ansible, Terraform, and Pulumi?","acceptedAnswer":{"@type":"Answer","text":"Terraform is a declarative provisioning tool that creates infrastructure (VMs, networks, databases) using HCL. Ansible is a procedural configuration management tool that configures servers and deploys applications using YAML playbooks — it can also provision infrastructure but that is not its primary strength. Pulumi is an infrastructure as code tool that uses general purpose programming languages (Python, TypeScript, Go, C#) instead of a DSL, and competes most directly with Terraform for provisioning."}},{"@type":"Question","name":"Puppet vs Terraform — which should I use?","acceptedAnswer":{"@type":"Answer","text":"Use Terraform for provisioning cloud infrastructure (creating EC2 instances, VPCs, RDS databases, load balancers). Use Puppet for configuring the operating system and software on already-provisioned servers (managing packages, files, services, users). They solve different problems and are often used together: Terraform provisions the server, Puppet configures it. Puppet is agent-based and requires a Puppet server; Terraform is agentless and runs locally or in CI/CD."}},{"@type":"Question","name":"Puppet vs Terraform vs Ansible — which is best?","acceptedAnswer":{"@type":"Answer","text":"Best depends on use case: Terraform wins for cloud infrastructure provisioning with state management. Ansible wins for agentless configuration management and ad-hoc automation with a lower learning curve. Puppet wins for large-scale declarative configuration management with strong compliance and reporting — typically in enterprises with 100+ servers. Most modern teams use Terraform for provisioning plus Ansible for configuration, skipping Puppet entirely unless they already have Puppet infrastructure."}}]}
+</script>
 </head>
+
 <body>
 
-  <h1>IaC Cross Tools</h1>
+<header>
+  <div class="header-inner">
+    <span class="logo-pill">IaC</span>
+    <span class="logo-text"><strong>iac</strong>-comparison-tools</span>
+  </div>
+</header>
 
-  <p>
-    A set of Infrastructure as Code (IaC) comparison tools designed for DevOps engineers
-    evaluating Terraform, Ansible, Pulumi, Chef, and Puppet across different use cases.
-  </p>
+<div class="wrapper">
 
-  <p>
-    Analyze performance, scalability, learning curve, and deployment workflows to choose
-    the right tool for your infrastructure automation strategy.
-  </p>
+  <section class="hero">
+    <p class="hero-eyebrow">// Infrastructure as Code Reference</p>
+    <h1><em>Ansible vs Pulumi vs Terraform</em><br>IaC Tools Comparison &amp; Selector</h1>
+    <p class="hero-sub">
+      Complete comparison of <strong>Terraform, Ansible, Pulumi, Puppet, and Chef</strong>. Find the right tool for your use case with the interactive selector. Covers provisioning, configuration management, state, and language requirements.
+    </p>
+    <div class="pill-row">
+      <span class="pill pill-tf">Terraform</span>
+      <span class="pill pill-an">Ansible</span>
+      <span class="pill pill-dim">Pulumi</span>
+      <span class="pill pill-dim">Puppet</span>
+      <span class="pill pill-dim">Chef</span>
+    </div>
+  </section>
 
-  <div class="tools">
-
-    <div class="tool"><a href="./ansible-chef-puppet/">Ansible vs Chef vs Puppet</a></div>
-    <div class="tool"><a href="./chef-puppet/">Chef vs Puppet Comparison</a></div>
-    <div class="tool"><a href="./pulumi-perf/">Pulumi Performance Analyzer</a></div>
-    <div class="tool"><a href="./tf-vs-ansible/">Terraform vs Ansible</a></div>
-    <div class="tool"><a href="./tf-vs-pulumi/">Terraform vs Pulumi</a></div>
-
+  <!-- INTERACTIVE SELECTOR -->
+  <div class="selector-shell">
+    <div class="sel-topbar">
+      <span class="sel-label">// IaC Tool Selector</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text-dim);">Answer 2 questions to get a recommendation</span>
+    </div>
+    <div class="sel-body">
+      <div class="qs-grid">
+        <div class="qs-group">
+          <span class="qs-label">Primary goal</span>
+          <div class="qs-options">
+            <button class="qs-opt" data-q="goal" data-v="provision" onclick="setAnswer(this,'goal','provision')">Provision cloud infra</button>
+            <button class="qs-opt" data-q="goal" data-v="config" onclick="setAnswer(this,'goal','config')">Configure servers</button>
+            <button class="qs-opt" data-q="goal" data-v="both" onclick="setAnswer(this,'goal','both')">Both</button>
+          </div>
+        </div>
+        <div class="qs-group">
+          <span class="qs-label">Language preference</span>
+          <div class="qs-options">
+            <button class="qs-opt" data-q="lang" data-v="dsl" onclick="setAnswer(this,'lang','dsl')">DSL / YAML is fine</button>
+            <button class="qs-opt" data-q="lang" data-v="real" onclick="setAnswer(this,'lang','real')">Real language (Python/TS)</button>
+          </div>
+        </div>
+      </div>
+      <div class="rec-card" id="recCard">
+        <div class="rec-tool" id="recTool"></div>
+        <div class="rec-why" id="recWhy"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- SEO LONG TAIL -->
-  <h2>Common IaC Comparison Queries</h2>
+  <!-- COMPARISON TABLE -->
+  <div class="cmp-wrap">
+    <div class="cmp-topbar">
+      <span class="sel-label">// Full Comparison Table</span>
+    </div>
+    <div class="filter-row">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);align-self:center;margin-right:6px;text-transform:uppercase;letter-spacing:0.06em;">Filter:</span>
+      <button class="filter-btn active" onclick="filterTable('all',this)">All</button>
+      <button class="filter-btn" onclick="filterTable('provisioning',this)">Provisioning</button>
+      <button class="filter-btn" onclick="filterTable('config',this)">Config Mgmt</button>
+      <button class="filter-btn" onclick="filterTable('workflow',this)">Workflow</button>
+      <button class="filter-btn" onclick="filterTable('learning',this)">Learning</button>
+    </div>
+    <div class="cmp-table-scroll">
+      <table class="cmp-table" id="cmpTable">
+        <thead>
+          <tr>
+            <th>Criteria</th>
+            <th style="color:var(--tf)">Terraform</th>
+            <th style="color:var(--red)">Ansible</th>
+            <th style="color:var(--pulumi)">Pulumi</th>
+            <th style="color:var(--puppet)">Puppet</th>
+            <th style="color:var(--chef)">Chef</th>
+          </tr>
+        </thead>
+        <tbody id="cmpBody"></tbody>
+      </table>
+    </div>
+  </div>
 
-  <ul>
-    <li>terraform vs ansible which is better for devops</li>
-    <li>terraform vs pulumi performance comparison</li>
-    <li>ansible vs chef vs puppet differences explained</li>
-    <li>when to use terraform vs configuration management tools</li>
-    <li>pulumi vs terraform real world use cases</li>
-    <li>is ansible better than terraform for provisioning</li>
-    <li>chef vs puppet pros and cons</li>
-  </ul>
+  <hr class="divider">
 
-  <p>
-    These tools are useful for teams building cloud infrastructure, automating deployments,
-    and scaling systems using modern DevOps practices.
-  </p>
+  <!-- TOOL PROFILES -->
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">IaC tool profiles</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="tool-cards" id="toolCards"></div>
+  </section>
 
-  <!-- snippet SEO -->
-  <pre>
-resource "aws_instance" "example" {
-  ami           = "ami-123456"
-  instance_type = "t2.micro"
+  <!-- VERSUS SECTIONS -->
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Ansible vs Terraform</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="versus-block">
+      <div class="vs-head">Ansible vs Terraform — Different tools for different jobs</div>
+      <div class="vs-row">
+        <div>
+          <div class="vs-col-head" style="color:var(--tf)">Terraform</div>
+          <div class="vs-body">Declarative: you describe the desired end state, Terraform figures out how to get there. Maintains state in a <code>.tfstate</code> file to track what already exists. Excellent for creating and managing cloud resources (EC2, VPC, RDS, IAM). Idempotent by design. HCL is a purpose-built DSL. Weak at runtime configuration of servers once they exist.</div>
+        </div>
+        <div>
+          <div class="vs-col-head" style="color:var(--red)">Ansible</div>
+          <div class="vs-body">Procedural: playbooks run tasks in order on remote servers over SSH. No agent required. YAML-based, shallow learning curve. Excellent for configuring installed software, managing packages, deploying application code, and running ad-hoc commands. Can provision infrastructure but lacks Terraform's state management for cloud resources.</div>
+        </div>
+      </div>
+      <div class="vs-verdict"><strong>Verdict:</strong> Use Terraform to provision the infrastructure, use Ansible to configure what runs on it. They complement each other — most production teams use both.</div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Puppet vs Terraform</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="versus-block">
+      <div class="vs-head">Puppet vs Terraform — Agent vs Agentless, Config vs Provision</div>
+      <div class="vs-row">
+        <div>
+          <div class="vs-col-head" style="color:var(--tf)">Terraform</div>
+          <div class="vs-body">Agentless — runs from your machine or CI/CD. State-driven cloud provisioner. Creates and manages cloud API resources. No server infrastructure needed to run it. Minimal setup. Best for greenfield cloud environments. Not designed for ongoing server configuration management.</div>
+        </div>
+        <div>
+          <div class="vs-col-head" style="color:var(--puppet)">Puppet</div>
+          <div class="vs-body">Agent-based — requires Puppet agent installed on every managed node, plus a Puppet server. Declarative DSL (Puppet language). Excellent for maintaining consistent state on hundreds of servers over time — ensuring packages, files, and services stay as defined. Strong compliance and reporting. High setup overhead. More common in enterprises already running Puppet.</div>
+        </div>
+      </div>
+      <div class="vs-verdict"><strong>Verdict:</strong> Terraform wins for cloud provisioning. Puppet wins for large-scale server configuration management with compliance requirements. Most new projects choose Terraform + Ansible over Terraform + Puppet due to lower operational overhead.</div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Pulumi vs Terraform</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="versus-block">
+      <div class="vs-head">Pulumi vs Terraform — Same problem, different language philosophy</div>
+      <div class="vs-row">
+        <div>
+          <div class="vs-col-head" style="color:var(--tf)">Terraform</div>
+          <div class="vs-body">HCL (HashiCorp Configuration Language) — purpose-built DSL readable by ops teams without programming backgrounds. Massive ecosystem of providers and modules. Terraform Cloud and Atlantis for team workflows. Industry standard since 2014. BSL license change in 2023 drove some teams to OpenTofu.</div>
+        </div>
+        <div>
+          <div class="vs-col-head" style="color:var(--pulumi)">Pulumi</div>
+          <div class="vs-body">Uses real programming languages: Python, TypeScript, Go, C#, Java. Full language features: loops, conditions, functions, unit testing. Uses the same providers as Terraform under the hood. Better for teams that prefer code over config and want to test infrastructure with standard testing frameworks. Smaller community than Terraform.</div>
+        </div>
+      </div>
+      <div class="vs-verdict"><strong>Verdict:</strong> Choose Terraform if your team is ops-oriented or already knows HCL. Choose Pulumi if your team is developer-oriented and wants to write infrastructure in Python or TypeScript with proper unit tests. Both manage state and cover the same cloud providers.</div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">FAQ — IaC tool comparison</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What is the difference between Ansible, Terraform, and Pulumi?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">Terraform and Pulumi are provisioning tools — they create cloud infrastructure via APIs and maintain a state file. Ansible is a configuration management and automation tool — it configures servers over SSH without an agent. Terraform uses HCL (a DSL), Pulumi uses real programming languages (Python, TypeScript, Go), Ansible uses YAML playbooks. Terraform and Pulumi compete directly. Ansible and Terraform/Pulumi are complementary — provision with Terraform, configure with Ansible.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Puppet vs Terraform — which is better?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">They solve different problems. Terraform provisions cloud infrastructure (creates VMs, databases, networks). Puppet configures servers that already exist (manages packages, files, services). Puppet requires agents on every managed node and a Puppet server — more operational overhead. Terraform is agentless. For new projects, Terraform + Ansible is the more common choice over Terraform + Puppet due to Ansible's simpler setup and agentless architecture.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Puppet vs Terraform vs Ansible — which should I learn?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">For modern cloud infrastructure: learn Terraform first — it's the industry standard for cloud provisioning with the largest job market. Add Ansible second for configuration management and deployments. Pulumi is worth learning if your team prefers Python or TypeScript. Puppet and Chef are less relevant for new projects but still used in large enterprises that invested in them years ago. The Terraform + Ansible combination covers 90% of infrastructure automation use cases.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can Ansible replace Terraform?<span class="faq-arrow">&#9660;</span></button>
+        <div class="faq-a">Ansible has AWS/Azure/GCP modules that can provision infrastructure, but it lacks Terraform's state management. Without state, Ansible cannot track what resources exist and running a playbook twice may create duplicate resources. Terraform's plan/apply workflow, drift detection, and destroy commands are purpose-built for infrastructure lifecycle management. For simple setups Ansible provisioning works, but for production cloud infrastructure Terraform's state model is a significant advantage.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OTHER TOOLS -->
+  <section class="content-section">
+    <div class="sec-head">
+      <span class="sec-label">Deep-dive comparisons</span>
+      <span class="sec-rule"></span>
+    </div>
+    <div class="other-tools">
+      <a href="ansible-chef-puppet/" class="otl"><p class="otl-eye">config //</p><span class="otl-name">Ansible vs Chef vs Puppet</span></a>
+      <a href="chef-puppet/" class="otl"><p class="otl-eye">config //</p><span class="otl-name">Chef vs Puppet</span></a>
+      <a href="pulumi-perf/" class="otl"><p class="otl-eye">perf //</p><span class="otl-name">Pulumi Performance Analyzer</span></a>
+      <a href="tf-vs-ansible/" class="otl"><p class="otl-eye">compare //</p><span class="otl-name">Terraform vs Ansible</span></a>
+      <a href="tf-vs-pulumi/" class="otl"><p class="otl-eye">compare //</p><span class="otl-name">Terraform vs Pulumi</span></a>
+    </div>
+  </section>
+
+  <div class="tag-cloud">
+    <span class="tag">ansible vs pulumi vs terraform comparison</span>
+    <span class="tag">puppet vs terraform</span>
+    <span class="tag">puppet vs terraform vs ansible</span>
+    <span class="tag">terraform vs puppet</span>
+    <span class="tag">terraform vs ansible</span>
+    <span class="tag">pulumi vs terraform</span>
+    <span class="tag">iac tools comparison 2025</span>
+    <span class="tag">infrastructure as code tools</span>
+    <span class="tag">ansible vs chef vs puppet</span>
+    <span class="tag">terraform state management</span>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p>iac-comparison-tools &middot; terraform &middot; ansible &middot; pulumi &middot; puppet</p>
+    <p>free reference &middot; github pages</p>
+  </div>
+</footer>
+
+<script>
+// ─── COMPARISON DATA ───
+var TABLE_ROWS = [
+  { cat: 'provisioning', criteria: 'Primary purpose', tf: 'Cloud provisioning', an: 'Config management', pu: 'Cloud provisioning', pp: 'Config management', ch: 'Config management' },
+  { cat: 'provisioning', criteria: 'State management', tf: ['strong','Yes (tfstate)'], an: ['weak','No state'], pu: ['strong','Yes (state backend)'], pp: ['medium','Catalog'], ch: ['weak','None'] },
+  { cat: 'provisioning', criteria: 'Cloud providers', tf: ['strong','1000+ providers'], an: ['good','AWS/Azure/GCP modules'], pu: ['strong','Uses TF providers'], pp: ['weak','Limited'], ch: ['weak','Limited'] },
+  { cat: 'provisioning', criteria: 'Drift detection', tf: ['strong','terraform plan'], an: ['weak','Manual'], pu: ['strong','pulumi preview'], pp: ['medium','Agent reports'], ch: ['weak','Limited'] },
+  { cat: 'config', criteria: 'Server config', tf: ['weak','Not designed for it'], an: ['strong','Core strength'], pu: ['weak','Not designed for it'], pp: ['strong','Core strength'], ch: ['strong','Core strength'] },
+  { cat: 'config', criteria: 'Agent required', tf: ['good','No agent'], an: ['good','No agent (SSH)'], pu: ['good','No agent'], pp: ['weak','Agent required'], ch: ['weak','Agent required'] },
+  { cat: 'config', criteria: 'OS management', tf: ['weak','No'], an: ['strong','Full support'], pu: ['weak','No'], pp: ['strong','Full support'], ch: ['strong','Full support'] },
+  { cat: 'workflow', criteria: 'Execution model', tf: '', an: '', pu: '', pp: '', ch: '', tf_: 'Plan then apply', an_: 'Playbook tasks', pu_: 'Plan then up', pp_: 'Catalog apply', ch_: 'Recipe converge' },
+  { cat: 'workflow', criteria: 'Idempotent', tf: ['strong','By design'], an: ['medium','Usually'], pu: ['strong','By design'], pp: ['strong','By design'], ch: ['medium','Usually'] },
+  { cat: 'workflow', criteria: 'CI/CD fit', tf: ['strong','Excellent'], an: ['strong','Excellent'], pu: ['strong','Good'], pp: ['medium','Complex setup'], ch: ['medium','Complex setup'] },
+  { cat: 'learning', criteria: 'Language', tf: '', an: '', pu: '', pp: '', ch: '', tf_: 'HCL (DSL)', an_: 'YAML', pu_: 'Python/TS/Go/C#', pp_: 'Puppet DSL', ch_: 'Ruby DSL' },
+  { cat: 'learning', criteria: 'Learning curve', tf: ['good','Low-Medium'], an: ['good','Low'], pu: ['medium','Medium'], pp: ['medium','Medium-High'], ch: ['weak','High'] },
+  { cat: 'learning', criteria: 'Community size', tf: ['strong','Very large'], an: ['strong','Very large'], pu: ['medium','Growing'], pp: ['good','Large'], ch: ['medium','Medium'] },
+  { cat: 'learning', criteria: 'Job market demand', tf: ['strong','Very high'], an: ['strong','Very high'], pu: ['good','Growing'], pp: ['medium','Medium'], ch: ['weak','Declining'] }
+];
+
+var TOOLS = [
+  { id: 'tf', name: 'Terraform', type: 'Provisioning', badge: 'tcb-tf',
+    desc: 'The industry standard for cloud infrastructure provisioning. Declarative HCL language, state management, plan/apply workflow, and 1000+ providers. Ideal for creating and managing cloud resources.',
+    tags: ['Provisioning', 'HCL', 'State', 'Agentless', 'HashiCorp/OpenTofu'] },
+  { id: 'an', name: 'Ansible', type: 'Config Management + Automation', badge: 'tcb-an',
+    desc: 'Agentless automation tool using SSH and YAML playbooks. Excellent for configuring servers, deploying applications, and ad-hoc automation. Lowest barrier to entry of all IaC tools.',
+    tags: ['Config Mgmt', 'YAML', 'Agentless', 'SSH', 'Red Hat'] },
+  { id: 'pu', name: 'Pulumi', type: 'Provisioning', badge: 'tcb-pu',
+    desc: 'Cloud infrastructure as code using real programming languages. Competes directly with Terraform but allows Python, TypeScript, Go, and C# instead of HCL. Same provider ecosystem.',
+    tags: ['Provisioning', 'Python/TS/Go', 'State', 'Developer-first'] },
+  { id: 'pp', name: 'Puppet', type: 'Config Management', badge: 'tcb-pp',
+    desc: 'Agent-based configuration management with declarative Puppet DSL. Excels at maintaining consistent state across large server fleets with compliance reporting. Common in enterprises.',
+    tags: ['Config Mgmt', 'Agent-based', 'Declarative', 'Enterprise'] },
+  { id: 'ch', name: 'Chef', type: 'Config Management', badge: 'tcb-ch',
+    desc: 'Agent-based configuration management using Ruby-based recipes and cookbooks. Powerful but complex. Declining adoption in favor of Ansible for new projects. Strong in legacy enterprise.',
+    tags: ['Config Mgmt', 'Ruby DSL', 'Agent-based', 'Enterprise'] }
+];
+
+var RECOMMENDATIONS = {
+  'provision_dsl':  { tool: 'Terraform', color: 'var(--tf)', why: 'For cloud provisioning with a DSL approach, <strong>Terraform</strong> is the industry standard. HCL is readable, the provider ecosystem is massive (1000+ providers), and the job market is the largest. Use OpenTofu if you need the BUSL-free fork.' },
+  'provision_real': { tool: 'Pulumi',    color: 'var(--pulumi)', why: '<strong>Pulumi</strong> gives you cloud provisioning in real languages — Python, TypeScript, Go, or C#. Use it if your team is developer-oriented and wants unit testing, loops, and conditions without learning HCL.' },
+  'config_dsl':     { tool: 'Ansible',   color: 'var(--red)',  why: '<strong>Ansible</strong> is the best choice for configuration management with YAML. Agentless over SSH, fast to learn, massive community. If you already have Puppet/Chef, stay with them — but for new projects Ansible wins.' },
+  'config_real':    { tool: 'Ansible + Python', color: 'var(--red)', why: '<strong>Ansible</strong> with custom modules in Python gives you config management with real code. Alternatively, Ansible\'s callback plugins and filter plugins are Python. Puppet and Chef have steeper learning curves.' },
+  'both_dsl':       { tool: 'Terraform + Ansible', color: 'var(--tf)', why: '<strong>Terraform</strong> for provisioning + <strong>Ansible</strong> for configuration is the most common stack in modern DevOps. Terraform creates the server, Ansible configures it. Both are declarative/YAML friendly.' },
+  'both_real':      { tool: 'Pulumi + Ansible', color: 'var(--pulumi)', why: '<strong>Pulumi</strong> for provisioning in Python/TypeScript + <strong>Ansible</strong> for configuration management. Gives you real language throughout with minimal DSL.' }
+};
+
+var answers = {};
+
+function setAnswer(btn, question, value) {
+  answers[question] = value;
+  var allBtns = document.querySelectorAll('.qs-opt[data-q="' + question + '"]');
+  allBtns.forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  updateRecommendation();
 }
-  </pre>
+
+function updateRecommendation() {
+  if (!answers.goal || !answers.lang) return;
+  var key = answers.goal + '_' + answers.lang;
+  var rec = RECOMMENDATIONS[key];
+  if (!rec) return;
+  var card = document.getElementById('recCard');
+  var toolEl = document.getElementById('recTool');
+  var whyEl = document.getElementById('recWhy');
+  toolEl.textContent = '\u25B6 Recommended: ' + rec.tool;
+  toolEl.style.color = rec.color;
+  whyEl.innerHTML = rec.why;
+  card.style.borderLeftColor = rec.color;
+  card.classList.add('show');
+}
+
+// ─── TABLE ───
+function scoreCell(val) {
+  if (!val) return '';
+  if (Array.isArray(val)) {
+    var cls = { strong: 'sp-strong', good: 'sp-good', medium: 'sp-medium', weak: 'sp-weak' }[val[0]] || 'sp-na';
+    return '<span class="score-pill ' + cls + '">' + val[1] + '</span>';
+  }
+  return val;
+}
+
+function renderTable(filter) {
+  var tbody = document.getElementById('cmpBody');
+  tbody.innerHTML = '';
+  TABLE_ROWS.forEach(function(row) {
+    if (filter !== 'all' && row.cat !== filter) return;
+    var tr = document.createElement('tr');
+    var cells = [
+      '<td class="td-criteria">' + row.criteria + '</td>',
+      '<td>' + scoreCell(row.tf || row.tf_) + '</td>',
+      '<td>' + scoreCell(row.an || row.an_) + '</td>',
+      '<td>' + scoreCell(row.pu || row.pu_) + '</td>',
+      '<td>' + scoreCell(row.pp || row.pp_) + '</td>',
+      '<td>' + scoreCell(row.ch || row.ch_) + '</td>'
+    ];
+    tr.innerHTML = cells.join('');
+    tbody.appendChild(tr);
+  });
+}
+
+function filterTable(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderTable(cat);
+}
+
+// ─── TOOL CARDS ───
+function renderToolCards() {
+  var container = document.getElementById('toolCards');
+  TOOLS.forEach(function(tool) {
+    var card = document.createElement('div');
+    card.className = 'tool-card';
+    var head = document.createElement('div');
+    head.className = 'tc-head';
+    var badge = document.createElement('span');
+    badge.className = 'tc-badge ' + tool.badge;
+    badge.textContent = tool.name;
+    var typeEl = document.createElement('span');
+    typeEl.className = 'tc-type';
+    typeEl.textContent = tool.type;
+    head.appendChild(badge);
+    head.appendChild(typeEl);
+    var desc = document.createElement('p');
+    desc.className = 'tc-desc';
+    desc.textContent = tool.desc;
+    var tags = document.createElement('div');
+    tags.className = 'tc-tags';
+    tool.tags.forEach(function(t) {
+      var tag = document.createElement('span');
+      tag.className = 'tc-tag';
+      tag.textContent = t;
+      tags.appendChild(tag);
+    });
+    card.appendChild(head);
+    card.appendChild(desc);
+    card.appendChild(tags);
+    container.appendChild(card);
+  });
+}
+
+function toggleFaq(btn) {
+  btn.parentElement.classList.toggle('open');
+}
+
+// ─── INIT ───
+renderTable('all');
+renderToolCards();
+</script>
 
 </body>
 </html>
